@@ -18,6 +18,5 @@ def rename_txt_files(folder_path):
             print(f"Renamed: {filename} -> {new_name}")
 
 if __name__ == "__main__":
-    # Change this to your desired folder path
     folder = r"C:\Users\greg\Desktop\brandon\iceVision\labels"
     rename_txt_files(folder)
