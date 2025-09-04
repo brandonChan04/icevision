@@ -1,5 +1,5 @@
-path: C:\Users\greg\Desktop\brandon\iceVision\files  # Root directory of your dataset
-train: images     # Relative path to training images
-val: images         # Relative path to validation images
+path: C:\Users\brandon\html2\iceVision_model\icevision\files  # Root directory of your dataset
+train: images\train     # Relative path to training images
+val: images\val         # Relative path to validation images
 nc: 1                   # Number of classes
 names: ['player']  # List of class names

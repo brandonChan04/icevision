@@ -1,22 +1,55 @@
+# trainModel.py
+# Train (or resume) YOLO on your hockey dataset, then validate and smoke-test.
+
 from ultralytics import YOLO
+from pathlib import Path
 
-# Load a pretrained YOLO11n model
-model = YOLO("yolo11n.pt")
+# --- Paths (edit if you move things) ---
+DATA_YAML = r"C:\Users\brandon\html2\iceVision_model\icevision\files\data.yaml"
+VAL_SAMPLE = r"C:\Users\brandon\html2\iceVision_model\icevision\files\images\val\video4_frame25.png"
 
-# Train the model on the COCO8 dataset for 100 epochs
-train_results = model.train(
-    data="C:\Users\greg\Desktop\brandon\iceVision\files",  # Path to dataset configuration file
-    epochs=100,  # Number of training epochs
-    imgsz=640,  # Image size for training
-    device="cpu",  # Device to run on (e.g., 'cpu', 0, [0,1,2,3])
-)
+# If you want to RESUME later from an existing run, set this to your previous best.pt.
+RESUME_FROM = None  # e.g., r"C:\Users\brandon\html2\iceVision_model\runs\detect\train\weights\best.pt"
 
-# Evaluate the model's performance on the validation set
-metrics = model.val()
+# Otherwise start from a pretrained checkpoint (recommended for a new run)
+PRETRAINED = "yolo11n.pt"
 
-# Perform object detection on an image
-results = model("path/to/image.jpg")  # Predict on an image
-results[0].show()  # Display results
+# Training knobs you’ll likely tweak later
+EPOCHS = 100
+IMGSZ = 854
+BATCH = 4
+DEVICE = "cpu"    # "0" for GPU, "cpu" otherwise
 
-# Export the model to ONNX format for deployment
-path = model.export(format="onnx")  # Returns the path to the exported model
+def main():
+    # 1) Load model (resume or start from pretrained)
+    model = YOLO(RESUME_FROM if RESUME_FROM else PRETRAINED)
+
+    # 2) Train
+    train_results = model.train(
+        data=DATA_YAML,
+        epochs=EPOCHS,
+        imgsz=IMGSZ,
+        batch=BATCH,
+        device=DEVICE,
+        rect=True,          # better for 16:9 rink frames
+        plots=True,         # saves learning curves
+        project=r"C:\Users\brandon\html2\iceVision_model\runs\detect",
+        name="train",       # run folder name (will auto-increment if exists)
+    )
+
+    # 3) Validate (mAP/precision/recall on val split)
+    metrics = model.val()
+
+    # 4) Quick predict on a known val image (smoke test)
+    if Path(VAL_SAMPLE).exists():
+        r = model(VAL_SAMPLE)
+        r[0].show()
+    else:
+        print(f"[WARN] VAL_SAMPLE not found: {VAL_SAMPLE}")
+
+    # 5) Optional: export for portable inference (ONNX)
+    export_path = model.export(format="onnx")
+    print(f"[INFO] Exported ONNX: {export_path}")
+
+if __name__ == "__main__":
+    main()

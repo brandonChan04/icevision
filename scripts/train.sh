@@ -1,6 +1,6 @@
 yolo train \
 model=yolo12m.pt \
-data=/home/kerdizheng/Desktop/icevision/data/data.yaml \
+data="C:\Users\brandon\html2\iceVision_model\icevision\files\data.yaml" \
 epochs=250 \
 imgsz=854 \
 batch=4 \
