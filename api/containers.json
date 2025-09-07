@@ -1,0 +1,40 @@
+﻿{
+    "name":  "icevision",
+    "image":  "467433242231.dkr.ecr.us-west-2.amazonaws.com/icevision-api:latest",
+    "cpu":  0,
+    "portMappings":  [
+                         {
+                             "containerPort":  8000,
+                             "hostPort":  8000,
+                             "protocol":  "tcp"
+                         }
+                     ],
+    "essential":  true,
+    "environment":  [
+                        {
+                            "name":  "MODEL_PATH",
+                            "value":  "/app/best.onnx"
+                        },
+                        {
+                            "name":  "IMG_SIZE",
+                            "value":  "864"
+                        }
+                    ],
+    "mountPoints":  [
+
+                    ],
+    "volumesFrom":  [
+
+                    ],
+    "logConfiguration":  {
+                             "logDriver":  "awslogs",
+                             "options":  {
+                                             "awslogs-group":  "/ecs/icevision-api",
+                                             "awslogs-region":  "us-west-2",
+                                             "awslogs-stream-prefix":  "ecs"
+                                         }
+                         },
+    "systemControls":  [
+
+                       ]
+}

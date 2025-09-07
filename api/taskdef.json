@@ -1,0 +1,28 @@
+{
+  "family": "icevision-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::467433242231:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "icevision",
+      "image": "467433242231.dkr.ecr.us-west-2.amazonaws.com/icevision-api:latest",
+      "portMappings": [{ "containerPort": 8000, "protocol": "tcp" }],
+      "environment": [
+        { "name": "MODEL_PATH", "value": "/app/best.onnx" },
+        { "name": "IMG_SIZE", "value": "864" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/icevision-api",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "essential": true
+    }
+  ]
+}
